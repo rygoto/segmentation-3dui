@@ -9,7 +9,6 @@ const ObjectDetection = () => {
     const [detectionInterval, setDetectionInterval] = useState();
 
     const startWebcam = async () => {
-        //TODO
         try {
             setIsWebcamStarted(true);
             const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -28,7 +27,6 @@ const ObjectDetection = () => {
         if (video) {
             const stream = video.srcObject;
             const tracks = stream.getTracks();
-
             tracks.forEach(track => {
                 track.stop();
             });
