@@ -9,7 +9,7 @@ function App() {
   return (
     <div className="app">
       <h1>画像物体検出</h1>
-      <ObjectDetection />
+      <XRScene />
     </div>
   );
 }

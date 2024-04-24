@@ -4,7 +4,7 @@ import { Canvas } from '@react-three/fiber'
 function XRScene() {
     return (
         <>
-            <VRButton mode={'AR'} />
+            <ARButton />
             <Canvas>
                 <XR>
                     <mesh>
