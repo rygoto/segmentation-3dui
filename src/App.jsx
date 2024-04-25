@@ -4,13 +4,18 @@ import '@tensorflow/tfjs-backend-webgl';
 import * as cocoSsd from "@tensorflow-models/coco-ssd"
 import ObjectDetection from './ObjectDetection';
 import XRScene from './XR';
+import Babylon from './Babylon';
 
 function App() {
   return (
-    <div className="app">
-      <h1>画像物体検出</h1>
-      <XRScene />
-    </div>
+    <Babylon />
   );
 }
 export default App;
+/*
+return (
+  <div className="app">
+    <Babylon />
+  </div>
+);
+*/
