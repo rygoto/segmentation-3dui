@@ -11,7 +11,12 @@ const ObjectDetection = () => {
     const startWebcam = async () => {
         try {
             setIsWebcamStarted(true);
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            const constraints = {
+                video: {
+                    facingMode: "environment" // 外側のカメラを使用する
+                }
+            };
+            const stream = await navigator.mediaDevices.getUserMedia(constraints);
 
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
@@ -35,15 +40,23 @@ const ObjectDetection = () => {
             setIsWebcamStarted(false)
         }
     };
+
     const predictObject = async () => {
         const model = await cocoSsd.load();
         model.detect(videoRef.current).then((predictions) => {
             setPredictions(predictions);
+            predictions.forEach((prediction, index) => {
+                console.log(`Object ${index + 1}:`);
+                console.log(`Class: ${prediction.class}`);
+                console.log(`Score: ${prediction.score}`);
+                console.log(`Bounding box: [x: ${prediction.bbox[0]}, y: ${prediction.bbox[1]}, width: ${prediction.bbox[2]}, height: ${prediction.bbox[3]}]`);
+            });
         })
             .catch(err => {
                 console.error(err)
             });
     };
+
     useEffect(() => {
         if (isWebcamStarted) {
             setDetectionInterval(setInterval(predictObject, 500));

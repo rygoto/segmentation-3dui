@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Engine, Scene, ArcRotateCamera, HemisphericLight, Vector3, Mesh, MeshBuilder, ActionManager, ExecuteCodeAction } from '@babylonjs/core';
+import { Engine, Scene, ArcRotateCamera, HemisphericLight, Vector3, Mesh, MeshBuilder, ActionManager, ExecuteCodeAction, WebXRState, WebXRDomOverlay } from '@babylonjs/core';
 
 function Babylon() {
     const canvasRef = useRef(null);
@@ -21,14 +21,28 @@ function Babylon() {
                 setShowText(!showText);
             }));
 
-            engine.runRenderLoop(() => {
-                scene.render();
-            });
-
             const xr = scene.createDefaultXRExperienceAsync({
                 uiOptions: {
                     sessionMode: 'immersive-ar',
                 },
+            });
+
+            xr.then(xrExperience => {
+                const featuresManager = xrExperience.baseExperience.featuresManager;
+                featuresManager.enableFeature(WebXRDomOverlay, "latest",
+                    { element: ".dom-overlay-container" }), undefined, false;
+                xrExperience.baseExperience.onStateChangedObservable.add((webXRState) => {
+                    switch (webXRState) {
+                        case WebXRState.ENTERING_XR:
+                        case WebXRState.IN_XR:
+                            console.log("overlay type:", featuresManager.getEnabledFeature(WebXRDomOverlay)?.domOverlayType);
+                            break;
+                    }
+                });
+            });
+
+            engine.runRenderLoop(() => {
+                scene.render();
             });
 
             return () => {
@@ -51,9 +65,13 @@ function Babylon() {
     return (
         <>
             <canvas ref={canvasRef} style={{ width: '800px', height: '600px' }} />
-            {showText && <div style={{ position: 'absolute', top: '10px', left: '10px', color: 'white', backgroundColor: 'rgba(0,0,0,0.5)', padding: '10px' }}>
-                Unko!
-            </div>}
+            <div style={{ position: 'absolute', top: '10px', left: '10px', color: 'white', backgroundColor: 'rgba(0,0,0,0.5)', padding: '10px' }}>
+                {showText && "Unko!"}
+            </div>
+            <div className="dom-overlay-container">
+                {"Oikora!-Gomen"}
+            </div>
+
             <button onClick={addShapes} style={{ position: 'absolute', top: '10px', right: '10px' }}>Add Shapes</button>
         </>
     );
